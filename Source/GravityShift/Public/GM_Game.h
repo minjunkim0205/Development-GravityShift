@@ -16,4 +16,14 @@ class GRAVITYSHIFT_API AGM_Game : public AGameModeBase
 
 public:
 	AGM_Game();
+
+protected:
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Players")
+	TSubclassOf<APawn> Player1Pawn;
+
+	UPROPERTY(EditAnywhere, Category = "Players")
+	TSubclassOf<APawn> Player2Pawn;
 };
