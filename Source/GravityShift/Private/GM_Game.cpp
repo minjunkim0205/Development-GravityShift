@@ -1,9 +1,10 @@
-#include "GM_Game.h"
 #include "GravityShift.h"
+#include "GM_Game.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
 #include "PC_Game.h"
+#include "GameFramework/Character.h"
 
 AGM_Game::AGM_Game()
 {
@@ -15,12 +16,8 @@ void AGM_Game::BeginPlay()
     Super::BeginPlay();
 
     UWorld* World = GetWorld();
-    if (!World)
-        return;
+    if (!World) return;
 
-    // -------------------------------
-    // PlayerStart 찾기 (태그 기반)
-    // -------------------------------
     AActor* P1Start = nullptr;
     AActor* P2Start = nullptr;
 
@@ -29,13 +26,9 @@ void AGM_Game::BeginPlay()
         APlayerStart* Start = *It;
 
         if (Start->ActorHasTag("Player01"))
-        {
             P1Start = Start;
-        }
         else if (Start->ActorHasTag("Player02"))
-        {
             P2Start = Start;
-        }
     }
 
     if (!P1Start || !P2Start)
@@ -44,33 +37,30 @@ void AGM_Game::BeginPlay()
         return;
     }
 
-    // -------------------------------
-    // Pawn 스폰
-    // -------------------------------
-    APawn* P1Pawn = nullptr;
-    APawn* P2Pawn = nullptr;
+    // ------------------------------------------
+    // Character Spawn
+    // ------------------------------------------
+    ACharacter* P1 = nullptr;
+    ACharacter* P2 = nullptr;
 
-    if (Player1Pawn)
+    if (Player1Character)
     {
-        P1Pawn = World->SpawnActor<APawn>(
-            Player1Pawn,
+        P1 = World->SpawnActor<ACharacter>(
+            Player1Character,
             P1Start->GetActorLocation(),
             P1Start->GetActorRotation()
         );
     }
 
-    if (Player2Pawn)
+    if (Player2Character)
     {
-        P2Pawn = World->SpawnActor<APawn>(
-            Player2Pawn,
+        P2 = World->SpawnActor<ACharacter>(
+            Player2Character,
             P2Start->GetActorLocation(),
             P2Start->GetActorRotation()
         );
     }
 
-    // -------------------------------
-    // PlayerController 설정
-    // -------------------------------
     APC_Game* PC = Cast<APC_Game>(World->GetFirstPlayerController());
     if (!PC)
     {
@@ -78,14 +68,11 @@ void AGM_Game::BeginPlay()
         return;
     }
 
-    // 컨트롤러에는 두 Pawn 전달
-    PC->Player1Pawn = P1Pawn;
-    PC->Player2Pawn = P2Pawn;
+    PC->Player1Character = P1;
+    PC->Player2Character = P2;
 
-    // 컨트롤러가 소유할 Pawn(1P만)
-    if (P1Pawn)
-    {
-        PC->Possess(P1Pawn);
-    }
-    PRINT_LOG(TEXT("P1,P2 Spawned!"));
+    if (P1)
+        PC->Possess(P1);
+
+    PRINT_LOG(TEXT("P1, P2 Character Spawned!"));
 }

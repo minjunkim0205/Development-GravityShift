@@ -16,10 +16,10 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    // 2개의 Pawn 클래스 (BP로 설정)
+    // 2개의 Character 클래스 (BP로 설정)
     UPROPERTY(EditAnywhere, Category = "Players")
-    TSubclassOf<APawn> Player1Pawn;
+    TSubclassOf<ACharacter> Player1Character;
 
     UPROPERTY(EditAnywhere, Category = "Players")
-    TSubclassOf<APawn> Player2Pawn;
+    TSubclassOf<ACharacter> Player2Character;
 };
