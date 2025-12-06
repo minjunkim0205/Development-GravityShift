@@ -59,10 +59,11 @@ void APC_Game::SetupInputComponent()
 void APC_Game::MoveP1(const FInputActionValue& Value)
 {
 	PRINT_LOG(TEXT("A,D"));
+	const float Axis = Value.Get<float>();
+		
 	if (Player1Character)
 	{
-		float Axis = Value.Get<float>();
-		Player1Character->AddMovementInput(FVector::RightVector, Axis);
+		Player1Character->AddMovementInput(FVector(1.f, 0.f, 0.f), Axis);
 	}
 }
 
@@ -81,10 +82,11 @@ void APC_Game::JumpP1(const FInputActionValue& Value)
 void APC_Game::MoveP2(const FInputActionValue& Value)
 {
 	PRINT_LOG(TEXT("LEFT,RIGHT"));
+	const float Axis = Value.Get<float>();
+
 	if (Player2Character)
 	{
-		float Axis = Value.Get<float>();
-		Player2Character->AddMovementInput(FVector::RightVector, Axis);
+		Player2Character->AddMovementInput(FVector(1.f, 0.f, 0.f), Axis);
 	}
 }
 
