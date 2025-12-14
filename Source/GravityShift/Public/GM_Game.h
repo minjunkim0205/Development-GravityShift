@@ -1,3 +1,4 @@
+/*GM_Game.h*/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,15 +12,4 @@ class GRAVITYSHIFT_API AGM_Game : public AGameModeBase
 
 public:
     AGM_Game();
-
-protected:
-    virtual void BeginPlay() override;
-
-public:
-    // 2개의 Character 클래스 (BP로 설정)
-    UPROPERTY(EditAnywhere, Category = "Players")
-    TSubclassOf<ACharacter> Player1Character;
-
-    UPROPERTY(EditAnywhere, Category = "Players")
-    TSubclassOf<ACharacter> Player2Character;
 };

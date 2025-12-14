@@ -1,3 +1,4 @@
+/*PC_Game.h*/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,48 +8,29 @@
 
 class UInputAction;
 class UInputMappingContext;
-class ACharacter;
 
 UCLASS()
 class GRAVITYSHIFT_API APC_Game : public APlayerController
 {
     GENERATED_BODY()
 
-public:
-    APC_Game();
-
 protected:
     virtual void BeginPlay() override;
     virtual void SetupInputComponent() override;
 
 public:
-    // 스폰된 Character
-    UPROPERTY(BlueprintReadWrite)
-    ACharacter* Player1Character;
-
-    UPROPERTY(BlueprintReadWrite)
-    ACharacter* Player2Character;
-
-    // Input Actions
+    // Input Mapping Context
     UPROPERTY(EditAnywhere, Category = "Input")
     UInputMappingContext* IMC_Game;
 
+    // Input Actions (이름 통일!)
     UPROPERTY(EditAnywhere, Category = "Input")
-    UInputAction* IA_Player01Move;
+    UInputAction* IA_PlayerMove;
 
     UPROPERTY(EditAnywhere, Category = "Input")
-    UInputAction* IA_Player01Jump;
-
-    UPROPERTY(EditAnywhere, Category = "Input")
-    UInputAction* IA_Player02Move;
-
-    UPROPERTY(EditAnywhere, Category = "Input")
-    UInputAction* IA_Player02Jump;
+    UInputAction* IA_PlayerJump;
 
 private:
-    void MoveP1(const FInputActionValue& Value);
-    void JumpP1(const FInputActionValue& Value);
-
-    void MoveP2(const FInputActionValue& Value);
-    void JumpP2(const FInputActionValue& Value);
+    void Move(const FInputActionValue& Value);
+    void Jump(const FInputActionValue& Value);
 };

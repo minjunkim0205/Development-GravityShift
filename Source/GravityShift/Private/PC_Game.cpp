@@ -1,25 +1,25 @@
+/*PC_Game.cpp*/
 #include "GravityShift.h"
 #include "PC_Game.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/Character.h"
 
-APC_Game::APC_Game()
-{
-	bShowMouseCursor = false;
-}
-
 void APC_Game::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+
+	if (Subsystem && IMC_Game)
 	{
-		if (IMC_Game)
-		{
-			Subsystem->AddMappingContext(IMC_Game, 0);
-		}
+		Subsystem->ClearAllMappings();
+		Subsystem->AddMappingContext(IMC_Game, 0);
 	}
+
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+	bShowMouseCursor = false;
 }
 
 void APC_Game::SetupInputComponent()
@@ -32,69 +32,38 @@ void APC_Game::SetupInputComponent()
 		return;
 	}
 
-	// Player1
-	if (IA_Player01Move)
+	if (IA_PlayerMove)
 	{
-		EIC->BindAction(IA_Player01Move, ETriggerEvent::Triggered, this, &APC_Game::MoveP1);
-	}
-	if (IA_Player01Jump) 
-	{
-		EIC->BindAction(IA_Player01Jump, ETriggerEvent::Started, this, &APC_Game::JumpP1);
+		PRINT_LOG(TEXT("Move IA mapping"));
+		EIC->BindAction(IA_PlayerMove, ETriggerEvent::Triggered, this, &APC_Game::Move);
 	}
 
-	// Player2
-	if (IA_Player02Move)
+	if (IA_PlayerJump)
 	{
-		EIC->BindAction(IA_Player02Move, ETriggerEvent::Triggered, this, &APC_Game::MoveP2);
-	}
-	if (IA_Player02Jump)
-	{
-		EIC->BindAction(IA_Player02Jump, ETriggerEvent::Started, this, &APC_Game::JumpP2);
+		PRINT_LOG(TEXT("Jump IA mapping"));
+		EIC->BindAction(IA_PlayerJump, ETriggerEvent::Started, this, &APC_Game::Jump);
 	}
 }
 
-// ------------------------------------------
-// Player 1 Move & Jump
-// ------------------------------------------
-void APC_Game::MoveP1(const FInputActionValue& Value)
+void APC_Game::Move(const FInputActionValue& Value)
 {
-	PRINT_LOG(TEXT("A,D"));
-	const float Axis = Value.Get<float>();
-		
-	if (Player1Character)
+	PRINT_LOG(TEXT("Move!"));
+	const float AxisValue = Value.Get<float>();
+	ACharacter* MyCharacter = Cast<ACharacter>(GetPawn());
+
+	if (MyCharacter)
 	{
-		Player1Character->AddMovementInput(FVector(1.f, 0.f, 0.f), Axis);
+		MyCharacter->AddMovementInput(FVector(0.f, 1.f, 0.f), AxisValue);
+
 	}
 }
 
-void APC_Game::JumpP1(const FInputActionValue& Value)
+void APC_Game::Jump(const FInputActionValue&)
 {
-	PRINT_LOG(TEXT("W"));
-	if (Player1Character)
+	PRINT_LOG(TEXT("Jump!"));
+	ACharacter* MyCharacter = Cast<ACharacter>(GetPawn());
+	if (MyCharacter)
 	{
-		Player1Character->Jump();
-	}
-}
-
-// ------------------------------------------
-// Player 2 Move & Jump
-// ------------------------------------------
-void APC_Game::MoveP2(const FInputActionValue& Value)
-{
-	PRINT_LOG(TEXT("LEFT,RIGHT"));
-	const float Axis = Value.Get<float>();
-
-	if (Player2Character)
-	{
-		Player2Character->AddMovementInput(FVector(1.f, 0.f, 0.f), Axis);
-	}
-}
-
-void APC_Game::JumpP2(const FInputActionValue& Value)
-{
-	PRINT_LOG(TEXT("UP"));
-	if (Player2Character) 
-	{
-		Player2Character->Jump();
+		MyCharacter->Jump();
 	}
 }
